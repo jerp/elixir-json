@@ -38,7 +38,7 @@ defmodule JSON.Decode do
     end
   end
 
-  # consume_value: binary -> { nil | true | false | List | HashDict | binary, binary }
+  # consume_value: binary -> { nil | true | false | List | Map | binary, binary }
 
   defp consume_value([ ?n, ?u, ?l, ?l  | rest ]), do: { :ok, nil,   rest }
   defp consume_value([ ?t, ?r, ?u, ?e  | rest ]), do: { :ok, true,  rest }
@@ -98,7 +98,7 @@ defmodule JSON.Decode do
     consume_value_result = consume_value(after_key)
     case consume_value_result do
       {:ok, value, after_value} ->
-        acc  = HashDict.put(acc, key, value)
+        acc  = Map.put(acc, key, value)
         after_value = consume_whitespace(after_value)
         case after_value do
           [ ?, | after_comma ] ->
@@ -109,7 +109,7 @@ defmodule JSON.Decode do
     end
   end
 
-  defp consume_object_contents(json) when is_list(json), do: consume_object_contents(HashDict.new, json)
+  defp consume_object_contents(json) when is_list(json), do: consume_object_contents(Map.new, json)
 
   defp consume_object_contents(acc, [ ?" | rest]) do
     consume_object_key_result = consume_object_key(rest)
